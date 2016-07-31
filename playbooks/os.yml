@@ -1,0 +1,6 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Ensure OS packages are the latest.
+      apt: upgrade=yes update_cache=yes cache_valid_time=86400

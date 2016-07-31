@@ -1,0 +1,5 @@
+---
+- hosts: all
+  tasks:
+    - name: Ensure all hosts are reachable.
+      ping:
