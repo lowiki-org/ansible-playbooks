@@ -1,5 +1,11 @@
-- src: geerlingguy.apache
-  version: 1.7.2
 - src: ANXS.postgresql
   version: v1.5.0
 - src: telusdigital.python
+- src: geerlingguy.apache
+  version: 1.7.2
+- src: geerlingguy.memcached
+  version: 1.0.7
+- src: geerlingguy.redis
+  version: 1.4.1
+- src: geerlingguy.varnish
+  version: 1.7.0
