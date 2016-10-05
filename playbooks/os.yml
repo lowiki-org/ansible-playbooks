@@ -2,5 +2,14 @@
 - hosts: all
   become: yes
   tasks:
+    - name: Ensure hostname is set.
+      hostname: name={{ inventory_hostname }}
+
+    - name: Ensure hosts are set.
+      lineinfile:
+        dest: /etc/hosts
+        line: "{{ hostvars[item].ansible_eth0.ipv4.address }} {{ item }}"
+      with_items: "{{ groups.all }}"
+
     - name: Ensure OS packages are the latest.
       apt: upgrade=yes update_cache=yes cache_valid_time=86400

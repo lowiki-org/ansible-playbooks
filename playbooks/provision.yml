@@ -1,27 +1,36 @@
 ---
-# Gather facts
-- include: os.yml
-
 - include: secret.yml
 
-- hosts: dbservers
+#- hosts: dbservers
+  #become: yes
+  #vars:
+    #postgresql_version: 9.1
+    #postgresql_encoding: 'UTF-8'
+    #postgresql_databases:
+      #- name: lowiki
+        #owner: lowiki
+    #postgresql_user_privileges:
+      #- name: lowiki
+        #db: lowiki
+        #priv: "ALL"
+        #role_attr_flags: "CREATEDB"
+    #postgresql_database_extensions:
+      #- db: lowiki
+        #extensions:
+          #- postgis
+    #postgresql_ext_install_postgis: yes
+  #roles:
+    #- ANXS.postgresql
+    #- localwiki-postgresql
+
+- hosts: cacheservers
   become: yes
-  vars:
-    postgresql_version: 9.1
-    postgresql_encoding: 'UTF-8'
-    postgresql_databases:
-      - name: lowiki
-        owner: lowiki
-    postgresql_user_privileges:
-      - name: lowiki
-        db: lowiki
-        priv: "ALL"
-        role_attr_flags: "CREATEDB"
-    postgresql_database_extensions:
-      - db: lowiki
-        extensions:
-          - postgis
-    postgresql_ext_install_postgis: yes
   roles:
-    - ANXS.postgresql
-    - localwiki-postgresql
+    - geerlingguy.memcached
+    - geerlingguy.redis
+
+#- hosts: webservers
+  #become: yes
+  #roles:
+    #- geerlingguy.apache
+    #- geerlingguy.varnish

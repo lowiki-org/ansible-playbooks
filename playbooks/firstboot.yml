@@ -1,0 +1,49 @@
+---
+- hosts: '{{ target }}'
+  tasks:
+    - name: Ensure beachmaster group exists.
+      group: name=beachmaster
+
+    - name: Ensure beachmaster user exists.
+      user: name=beachmaster group=beachmaster groups=sudo
+
+    - name: Ensure SSH authorized keys directory exists.
+      file: dest=/home/beachmaster/.ssh state=directory
+
+    - name: Ensure SSH authorized keys for beachmaster exists.
+      copy: src=ssh_pubkey dest=/home/beachmaster/.ssh/authorized_keys
+
+    - name: Ensure sudo group members get NOPASSWD.
+      lineinfile:
+        dest: /etc/sudoers
+        regexp: '^%sudo'
+        line: '%sudo   ALL=(ALL:ALL) NOPASSWD: ALL'
+
+    - name: Disallow root login with SSH.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+
+    - name: Allow specify group login with SSH.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      with_items:
+        - { regexp: '^## Group', line: '## Group' }
+        - { regexp: '^AllowGroups', line: 'AllowGroups beachmaster answerable' }
+
+    - name: Disallow answerable SSH login by password.
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      with_items:
+        - { regexp: '^## Answerable specify config', line: '## Answerable specify config' }
+        - { regexp: '^Match User answerable', line: 'Match User answerable' }
+        - { regexp: '^  PasswordAuthentication', line: '  PasswordAuthentication no' }
+
+    - name: Reload SSHD
+      service: name=ssh state=reloaded
+
