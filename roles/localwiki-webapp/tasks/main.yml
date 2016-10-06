@@ -1,0 +1,63 @@
+---
+- name: Ensure Python virtualenv environment exists.
+  command: virtualenv --system-site-packages {{ localwiki_webapp_dir }}/env
+  args:
+    creates: "{{ localwiki_webapp_dir }}/env"
+
+- name: Ensure webapp code is checked out.
+  git:
+    repo: "{{ localwiki_webapp_git_repo }}"
+    dest: "{{ localwiki_webapp_dir }}/src"
+    version: "{{ localwiki_webapp_git_branch }}"
+    force: yes
+
+- name: Remove files.
+  file:
+    dest: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ localwiki_webapp_dir }}/src/localwiki.egg-info"
+    - "{{ localwiki_webapp_dir }}/src/dist"
+
+- name: Ensure Python dependencies are the latest.
+  pip:
+    name: "{{ item }}"
+    virtualenv: "{{ localwiki_webapp_dir }}/env"
+  with_items:
+    - setuptools
+
+- name: Ensure Python requirements.txt dependencies are the latest.
+  pip:
+    requirements: "{{ localwiki_webapp_dir }}/src/requirements.txt"
+    virtualenv: "{{ localwiki_webapp_dir }}/env"
+
+- name: Run setup.py
+  command: "{{ localwiki_webapp_dir }}/env/bin/python setup.py develop"
+  args:
+    chdir: "{{ localwiki_webapp_dir }}/src"
+
+- name: Ensure share directory exists.
+  synchronize: dest={{ localwiki_webapp_dir }}/env/share src=localwiki
+
+- name: Update Django settings.
+  template:
+    src: localsettings.py
+    dest: "{{ localwiki_webapp_dir }}/env/share/localwiki/conf/localsettings.py"
+
+- name: Run setup_all
+  command: "{{ localwiki_webapp_dir }}/env/bin/localwiki-manage setup_all"
+
+#- name: Ensure webapp WSGI script exists.
+
+#- name: Ensure Apache virtualhost exists.
+
+#- name: Update webapp code.
+
+#- name: Update webapp WSGI processes.
+
+- name: Ensure webapp is owned by webapp user.
+  file:
+    dest: "{{ localwiki_webapp_dir }}"
+    owner: "{{ localwiki_user }}"
+    group: "{{ localwiki_group }}"
+    recurse: yes
