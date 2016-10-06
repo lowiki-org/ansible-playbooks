@@ -1,14 +1,25 @@
 ---
-- include: secret.yml
+- hosts: all
+  tasks:
+    - name: Collect facts
+      debug:
 
 #- hosts: dbservers
   #become: yes
+  #vars_files:
+    #- vars/secret.yml
+  #vars:
+    #postgresql_version: 9.1
+    #postgresql_encoding: 'UTF-8'
+    #postgresql_ext_install_postgis: yes
   #roles:
     #- ANXS.postgresql
     #- localwiki-postgresql
 
 - hosts: cacheservers
   become: yes
+  vars_files:
+    - vars/secret.yml
   vars:
     memcached_listen_ip: 0.0.0.0
     redis_bind_interface: 0.0.0.0
@@ -19,6 +30,8 @@
     - geerlingguy.firewall
     - geerlingguy.memcached
     - geerlingguy.redis
+    - geerlingguy.java
+    - geerlingguy.solr
   tasks:
     - name: Ensure webservers has access to cacheservers.
       lineinfile:
@@ -29,8 +42,8 @@
 
 - hosts: webservers
   become: yes
-  vars:
-    varnish_version: "3.0.5-2"
+  vars_files:
+    - vars/secret.yml
   roles:
     - geerlingguy.apache
     - geerlingguy.varnish
