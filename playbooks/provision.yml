@@ -3,22 +3,6 @@
 
 #- hosts: dbservers
   #become: yes
-  #vars:
-    #postgresql_version: 9.1
-    #postgresql_encoding: 'UTF-8'
-    #postgresql_databases:
-      #- name: lowiki
-        #owner: lowiki
-    #postgresql_user_privileges:
-      #- name: lowiki
-        #db: lowiki
-        #priv: "ALL"
-        #role_attr_flags: "CREATEDB"
-    #postgresql_database_extensions:
-      #- db: lowiki
-        #extensions:
-          #- postgis
-    #postgresql_ext_install_postgis: yes
   #roles:
     #- ANXS.postgresql
     #- localwiki-postgresql
@@ -43,8 +27,10 @@
         line='iptables -A INPUT -s {{ hostvars[item].ansible_eth0.ipv4.address }} -j ACCEPT'
       with_items: "{{ groups['webservers'] }}"
 
-#- hosts: webservers
-  #become: yes
-  #roles:
-    #- geerlingguy.apache
-    #- geerlingguy.varnish
+- hosts: webservers
+  become: yes
+  vars:
+    varnish_version: "3.0.5-2"
+  roles:
+    - geerlingguy.apache
+    - geerlingguy.varnish

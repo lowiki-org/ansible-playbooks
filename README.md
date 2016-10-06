@@ -14,8 +14,8 @@
 ### Usage
 
 ```
-# Create Linode, and then
-$ ansible-playbook -u root -k -e target=web0 playbooks/firstboot.yml
+# Create Linode, add to `hosts`, and then
+$ ansible-playbook -u root -k -e target=web0 playbooks/firstboot.yml  # needs root password
 $ ansible-playbook -u beachmaster playbooks/os.yml
 $ ansible-playbook -u beachmaster playbooks/provision.yml
 $ ansible-playbook -u beachmaster playbooks/deploy.yml
