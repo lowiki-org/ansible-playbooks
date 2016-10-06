@@ -25,9 +25,22 @@
 
 - hosts: cacheservers
   become: yes
+  vars:
+    memcached_listen_ip: 0.0.0.0
+    firewall_allowed_tcp_ports:
+      - "22"
+    firewall_allowed_udp_ports: []
   roles:
+    - geerlingguy.firewall
     - geerlingguy.memcached
-    - geerlingguy.redis
+    #- geerlingguy.redis
+  tasks:
+    - name: Ensure webservers can access cacheservers.
+      lineinfile:
+        dest=/etc/firewall.bash
+        insertafter='^# Additional custom rules.'
+        line='iptables -A INPUT -s {{ hostvars[item].ansible_eth0.ipv4.address }} -j ACCEPT'
+      with_items: '{{ groups[webservers] }}'
 
 #- hosts: webservers
   #become: yes
