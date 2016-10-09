@@ -15,7 +15,7 @@ solr_version: "3.6.2"
 solr_host: "0.0.0.0"
 localwiki_webapp_dir: "/srv/localwiki"
 localwiki_webapp_git_repo: "https://github.com/lowiki-org/localwiki-backend-server.git"
-localwiki_webapp_git_branch: "origin/master"
+localwiki_webapp_git_checkout: "origin/production"
 public_hostname: "lowiki.org"
 custom_domains:
   - lowiki.tw

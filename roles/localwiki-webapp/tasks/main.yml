@@ -8,7 +8,7 @@
   git:
     repo: "{{ localwiki_webapp_git_repo }}"
     dest: "{{ localwiki_webapp_dir }}/src"
-    version: "{{ localwiki_webapp_git_branch }}"
+    version: "{{ localwiki_webapp_git_checkout }}"
     force: yes
 
 - name: Remove files.

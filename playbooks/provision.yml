@@ -4,40 +4,40 @@
     - name: Collect facts.
       debug:
 
-#- hosts: dbservers
-  #become: yes
-  #vars_files:
-    #- vars/main.yml
-    #- vars/secret.yml
-  #vars:
-    #postgresql_version: 9.1
-    #postgresql_encoding: 'UTF-8'
-    #postgresql_ext_install_postgis: yes
+- hosts: dbservers
+  become: yes
+  vars_files:
+    - vars/main.yml
+    - vars/secret.yml
+  vars:
+    postgresql_version: 9.1
+    postgresql_encoding: 'UTF-8'
+    postgresql_ext_install_postgis: yes
   #roles:
     #- ANXS.postgresql
-  #tasks:
-  #- name: Ensure Postgresql-related packages are the latest.
-    #apt: name={{ item }} state=latest
-    #with_items:
-      #- gdal-bin
+  tasks:
+  - name: Ensure Postgresql-related packages are the latest.
+    apt: name={{ item }} state=latest
+    with_items:
+      - gdal-bin
       #- proj
-      #- postgresql-server-dev-all
-      #- postgresql-9.1-postgis
+      - postgresql-server-dev-all
+      - postgresql-9.1-postgis-2.1
 
-  #- name: Ensure Postgresql is configured to listen all interfaces.
-    #lineinfile:
-      #dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
-      #regexp: "^listen_addresses = "
-      #line: "listen_addresses = '*'"
+  - name: Ensure Postgresql is configured to listen all interfaces.
+    lineinfile:
+      dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+      regexp: "^listen_addresses = "
+      line: "listen_addresses = '*'"
     #notify:
       #- restart postgresql
-  #- name: Ensure Postgresql is configured to allow remote Django app login.
-    #lineinfile:
-      #dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
-      #line: "host all all {{ hostvars[item]['ansible_eth0']['ipv4']['address'] }}/32 trust"
-    #with_items: "{{ groups['webservers'] }}"
-    #notify:
-      #- restart postgresql
+  - name: Ensure Postgresql is configured to allow remote Django app login.
+    lineinfile:
+      dest: /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+      line: "host all all {{ hostvars[item]['ansible_eth0']['ipv4']['address'] }}/32 trust"
+    with_items: "{{ groups['webservers'] }}"
+    notify:
+      - restart postgresql
 
 - hosts: cacheservers
   become: yes
@@ -123,3 +123,8 @@
         - python-software-properties
         - git
         #- unattended-upgrades
+        - binutils
+        - libproj-dev
+        - gdal-bin
+        - libgeos-3.4.2
+        - yui-compressor
