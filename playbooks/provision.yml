@@ -7,6 +7,7 @@
 #- hosts: dbservers
   #become: yes
   #vars_files:
+    #- vars/main.yml
     #- vars/secret.yml
   #vars:
     #postgresql_version: 9.1
@@ -38,42 +39,51 @@
     #notify:
       #- restart postgresql
 
-#- hosts: cacheservers
-  #become: yes
-  #vars_files:
-    #- vars/secret.yml
-  #vars:
-    #memcached_listen_ip: 0.0.0.0
-    #redis_bind_interface: 0.0.0.0
-    #firewall_allowed_tcp_ports:
-      #- "22"
-    #firewall_allowed_udp_ports: []
-  #roles:
-    #- geerlingguy.firewall
-    #- geerlingguy.memcached
-    #- geerlingguy.redis
-  #tasks:
-    #- name: Ensure webservers has access to cacheservers.
-      #lineinfile:
-        #dest=/etc/firewall.bash
-        #insertafter='^# Additional custom rules.'
-        #line='iptables -A INPUT -s {{ hostvars[item].ansible_eth0.ipv4.address }} -j ACCEPT'
-      #with_items: "{{ groups['webservers'] }}"
+- hosts: cacheservers
+  become: yes
+  vars_files:
+    - vars/main.yml
+    - vars/secret.yml
+  vars:
+    memcached_listen_ip: 0.0.0.0
+    redis_bind_interface: 0.0.0.0
+    firewall_allowed_tcp_ports:
+      - "22"
+    firewall_allowed_udp_ports: []
+  roles:
+    - geerlingguy.firewall
+    - geerlingguy.memcached
+    - geerlingguy.redis
+    - geerlingguy.solr
+  tasks:
+    - name: Ensure webservers has access to cacheservers.
+      lineinfile:
+        dest=/etc/firewall.bash
+        insertafter='^# Additional custom rules.'
+        line='iptables -A INPUT -s {{ hostvars[item].ansible_eth0.ipv4.address }} -j ACCEPT'
+      with_items: "{{ groups['webservers'] }}"
 
 - hosts: webservers
   become: yes
   vars_files:
-    - vars/secret.yml
     - vars/main.yml
+    - vars/secret.yml
   roles:
     - geerlingguy.apache
+
+- hosts: loadbalancers
+  become: yes
+  vars_files:
+    - vars/main.yml
+    - vars/secret.yml
+  roles:
     - geerlingguy.varnish
 
 - hosts: webservers
   become: yes
   vars_files:
-    - vars/secret.yml
     - vars/main.yml
+    - vars/secret.yml
   tasks:
     - name: Ensure webapp group exists.
       group: name={{ localwiki_group }}
@@ -98,7 +108,6 @@
     - name: Ensure APT repository exists
       apt_repository: repo={{ item }}
       with_items:
-        - ppa:webops/solr-3.5
         - ppa:ubuntugis/ubuntugis-unstable
 
     - name: Ensure OS package dependencies are the latest.

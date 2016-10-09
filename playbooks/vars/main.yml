@@ -8,7 +8,11 @@ apache_packages:
 apache_mods_enabled:
   - wsgi.load
 varnish_listen_port: 6081
+varnish_default_backend_host: "web0"
 varnish_default_backend_port: "{{ apache_listen_port }}"
+solr_workspace: /home/beachmaster
+solr_version: "3.6.2"
+solr_host: "0.0.0.0"
 localwiki_webapp_dir: "/srv/localwiki"
 localwiki_webapp_git_repo: "https://github.com/lowiki-org/localwiki-backend-server.git"
 localwiki_webapp_git_branch: "origin/master"
