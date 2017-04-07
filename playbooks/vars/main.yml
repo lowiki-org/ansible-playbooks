@@ -19,3 +19,9 @@ localwiki_webapp_git_checkout: "origin/production"
 public_hostname: "lowiki.org"
 custom_domains:
   - lowiki.tw
+private_ips:
+  bal0: '192.168.156.39'
+  cache0: '192.168.136.236'
+  db0: '192.168.145.251'
+  web0: '192.168.158.216'
+  web1: '192.168.139.181'

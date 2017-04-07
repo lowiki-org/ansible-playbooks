@@ -13,8 +13,8 @@
     postgresql_version: 9.1
     postgresql_encoding: 'UTF-8'
     postgresql_ext_install_postgis: yes
-  #roles:
-    #- ANXS.postgresql
+  roles:
+    - ANXS.postgresql
   tasks:
   - name: Ensure Postgresql-related packages are the latest.
     apt: name={{ item }} state=latest
