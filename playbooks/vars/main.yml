@@ -25,3 +25,8 @@ private_ips:
   db0: '192.168.145.251'
   web0: '192.168.158.216'
   web1: '192.168.139.181'
+certbot_auto_renew: yes
+certbot_auto_renew_user: "{{ ansible_user }}"
+certbot_auto_renew_hour: 5
+certbot_auto_renew_minute: 19
+certbot_install_from_source: yes

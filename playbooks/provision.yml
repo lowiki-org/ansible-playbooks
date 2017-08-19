@@ -77,6 +77,8 @@
     - vars/main.yml
     - vars/secret.yml
   roles:
+    - geerlingguy.git
+    - geerlingguy.certbot
     - geerlingguy.varnish
 
 - hosts: webservers
