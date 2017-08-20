@@ -7,6 +7,8 @@ apache_packages:
   - libapache2-mod-wsgi
 apache_mods_enabled:
   - wsgi.load
+postgresql_listen_addresses:
+  - '*'
 varnish_listen_port: 6081
 varnish_default_backend_host: "web0"
 varnish_default_backend_port: "{{ apache_listen_port }}"
