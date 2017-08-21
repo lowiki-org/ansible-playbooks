@@ -8,4 +8,12 @@
     - geerlingguy.git
     - geerlingguy.certbot
     - geerlingguy.varnish
+  tasks:
+    # XXX geerlingguy.varnish works on Debian which installs 4.x
+    # This can be removed after upstream updated.
+    - name: Ensure Varnish configuration works for 3.x.
+      lineinfile:
+        dest: /etc/varnish/default.vcl
+        line: "vcl 4.0;"
+        state: absent
 
