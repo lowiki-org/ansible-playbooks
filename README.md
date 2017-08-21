@@ -20,3 +20,6 @@ $ ansible-playbook -u beachmaster playbooks/os.yml
 $ ansible-playbook -u beachmaster playbooks/provision.yml
 $ ansible-playbook -u beachmaster playbooks/deploy.yml
 ```
+## TODO
+
+* [ ] Switch to geerlingguy.postgresql.
